@@ -9,10 +9,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-  ;
+import { Button } from "@/components/ui/button";
 import { Room } from "@/db/schema";
-import { getRooms } from "@/data-access/rooms";
+import { getAllRooms } from "@/data-access/rooms";
 
 
 function RoomCard({ room }: { room: Room }) {
@@ -55,7 +54,7 @@ function RoomCard({ room }: { room: Room }) {
 
 
 export default async function Home() {
-  const rooms = await getRooms();
+  const rooms = await getAllRooms();
 
   return (
     <main className="min-h-screen p-16 px-24 gap-2">
