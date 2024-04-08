@@ -36,10 +36,10 @@ function AccountDropdown() {
               alt="Your Avatar"
             />
             <AvatarFallback>
-              {session.data?.user.name?.split(" ")[0][0]}
+              {session.data?.user.name?.split(" ").map((name) => name[0])}
             </AvatarFallback>
           </Avatar>
-          {session.data?.user?.name}
+          <span className="hidden md:block">{session.data?.user?.name}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

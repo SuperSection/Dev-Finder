@@ -34,7 +34,7 @@ export default function CreateRoomForm() {
       name: "",
       description: "",
       githubRepo: "",
-      language: "",
+      tags: "",
       isPrivate: false,
       password: "",
     },
@@ -131,19 +131,19 @@ export default function CreateRoomForm() {
 
         <FormField
           control={control}
-          name="language"
+          name="tags"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Primary Programming Language</FormLabel>
+              <FormLabel>Tags</FormLabel>
               <FormControl>
                 <Input
                   {...field}
-                  {...register("language")}
+                  {...register("tags")}
                   placeholder="typescript, nextjs, tailwind"
                 />
               </FormControl>
               <FormDescription>
-                List the primary programming language you are working with
+                List your programming languages, frameworks, libraries so people can find their preferrences
               </FormDescription>
               <FormMessage />
             </FormItem>

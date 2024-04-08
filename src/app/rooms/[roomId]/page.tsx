@@ -1,7 +1,10 @@
-import { Button } from "@/components/ui/button";
-import { getRoom } from "@/data-access/rooms";
-import { GithubIcon } from "lucide-react";
 import Link from "next/link";
+import { GithubIcon } from "lucide-react";
+import { getRoom } from "@/data-access/rooms";
+import { Button } from "@/components/ui/button";
+import { TagsList, splitTags } from "@/components/tags-list";
+import { DevFinderVideoRoom } from "./video-player";
+
 
 export default async function RoomPage(props: { params: { roomId: string } }) {
   const roomId = props.params.roomId;
@@ -25,26 +28,31 @@ export default async function RoomPage(props: { params: { roomId: string } }) {
     <div className="grid grid-cols-4 min-h-screen">
       <div className="col-span-3 p-4 pr-2">
         <div className="drop-shadow-lg border bg-card text-card-foreground rounded-lg p-5">
-          VIDEO PLAYER
+          <DevFinderVideoRoom room={room} />
         </div>
       </div>
+
       <div className="col-span-1 p-4 pl-2">
-        <div
-          className="drop-shadow-lg border bg-card text-card-foreground rounded-lg p-5 flex flex-col gap-3"
-        >
-          <h1 className="text-lg font-medium">{room.name}</h1>
-          <p className="text-sm text-gray-500">{room.description}</p>
+        <div className="drop-shadow-lg border bg-card text-card-foreground rounded-lg p-5 flex flex-col gap-2">
+          <h1 className="text-lg font-semibold">{room.name}</h1>
+
           {room.githubRepo && (
             <Link
               href={room.githubRepo}
               target="blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 hover:underline"
+              className="flex items-center gap-2 mb-2 text-sm text-center hover:underline"
             >
-              <GithubIcon />
+              <GithubIcon size={20} />
               Github Project
             </Link>
           )}
+
+          <p className="text-sm text-gray-500">{room.description}</p>
+          <div className="mt-4">
+          <TagsList tags={splitTags(room.tags)} />
+          </div>
+
         </div>
       </div>
     </div>

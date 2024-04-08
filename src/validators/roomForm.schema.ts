@@ -8,16 +8,15 @@ const roomFormSchema = z
       .min(1, {
         message: "Please provide a room name.",
       })
-      .max(50),
+      .max(100),
     description: z
       .string()
       .min(1, { message: "Please provide description of the room." })
-      .max(300),
+      .max(350),
     githubRepo: z.string(),
-    language: z
+    tags: z
       .string()
-      .min(1, { message: "Please provide your tech stack." })
-      .max(50),
+      .min(1, { message: "Please provide the tech stack of your project." }),
     isPrivate: z.boolean().default(false),
     password: z.string(),
   })

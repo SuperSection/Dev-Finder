@@ -78,7 +78,7 @@ export const rooms = pgTable("room", {
   name: text("name").notNull(),
   description: text("description"),
   githubRepo: text("githubRepo"),
-  language: text("language").notNull(),
+  tags: text("language").notNull(),
   isPrivate: boolean("isPrivate").default(false),
   password: text("password"),
 });

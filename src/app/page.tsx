@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { GithubIcon } from "lucide-react";
 
+import { Room } from "@/db/schema";
 import {
   Card,
   CardContent,
@@ -10,19 +11,19 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
-import { Room } from "@/db/schema";
 import { getAllRooms } from "@/data-access/rooms";
+import { splitTags, TagsList } from "@/components/tags-list";
 
 
 function RoomCard({ room }: { room: Room }) {
   return (
-    <Card className="relative h-56">
+    <Card>
       <CardHeader>
         <CardTitle>{room.name}</CardTitle>
         <CardDescription>{room.description}</CardDescription>
       </CardHeader>
+      <CardContent>
       {room.githubRepo && (
-        <CardContent>
           <Link
             href={room.githubRepo}
             target="blank"
@@ -32,22 +33,19 @@ function RoomCard({ room }: { room: Room }) {
             <GithubIcon />
             Github Project
           </Link>
-        </CardContent>
       )}
-      <CardContent className="flex gap-3 items-center">
-        {room.language.split(",").map((language) => (
-          <div key={language}>
-            <span className="rounded-xl p-1.5 px-3 bg-slate-700">
-              {language}
-            </span>
-          </div>
-        ))}
       </CardContent>
-      <CardFooter className="absolute bottom-0 right-0">
-        <Button asChild>
-          <Link href={`/rooms/${room.id}`}>Join Room</Link>
-        </Button>
-      </CardFooter>
+
+      <div className="xl:flex lg:block flex justify-between items-center">
+        <CardContent>
+          <TagsList tags={splitTags(room.tags)} badgeType="secondary" />
+        </CardContent>
+        <CardFooter>
+          <Button asChild>
+            <Link href={`/rooms/${room.id}`}>Join Room</Link>
+          </Button>
+        </CardFooter>
+      </div>
     </Card>
   );
 }
@@ -57,15 +55,15 @@ export default async function Home() {
   const rooms = await getAllRooms();
 
   return (
-    <main className="min-h-screen p-16 px-24 gap-2">
+    <main className="min-h-screen lg:p-16 lg:px-24 p-10 px-7 gap-2">
       <div className="w-full flex items-center justify-between mb-8">
-        <h1 className="text-4xl">Find Dev Rooms</h1>
+        <h1 className="text-4xl font-bold">Find Dev Rooms</h1>
         <Button asChild>
           <Link href="/create-room">Create Room</Link>
         </Button>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="lg:grid grid-cols-3 gap-4 flex flex-col">
         {rooms.map((room) => {
           return <RoomCard key={room.id} room={room} />;
         })}
