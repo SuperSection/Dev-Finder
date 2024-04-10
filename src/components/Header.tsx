@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { LogInIcon, LogOutIcon } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 import {
@@ -17,6 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 
 function AccountDropdown() {
+  const router = useRouter();
   const session = useSession();
 
   const isUserLoggedIn = !!session.data;
@@ -43,15 +45,23 @@ function AccountDropdown() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        {isUserLoggedIn ? (
-          <DropdownMenuItem onClick={() => signOut()}>
+        {isUserLoggedIn && (
+          <DropdownMenuItem
+            onClick={() =>
+              signOut({
+                callbackUrl: "/",
+              })
+            }
+          >
             <LogOutIcon className="mr-2" /> Sign Out
           </DropdownMenuItem>
-        ) : (
-          <DropdownMenuItem onClick={() => signIn("google")}>
-            <LogInIcon className="mr-2" /> Sign In
-          </DropdownMenuItem>
         )}
+        <DropdownMenuItem
+          className="text-base px-6 w-full"
+          onClick={() => router.push("/my-rooms")}
+        >
+          My Rooms
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -59,23 +69,56 @@ function AccountDropdown() {
 
 
 export function Header() {
+  const session = useSession();
+  const routerPath = usePathname();
+
+  const isUserLoggedIn = !!session.data;
+
   return (
-    <header className=" dark:bg-gray-900 bg-gray-100 p-2">
+    <header className=" dark:bg-gray-900 bg-gray-100 p-2 z-10 relative">
       <div className="flex justify-between items-center  container px-auto">
         <div>
-          <Link href="/" className="flex items-center text-xl font-semibold">
+          <Link
+            href="/dev-rooms"
+            className="flex items-center text-xl font-semibold"
+          >
             <Image
               src="/logo.png"
-              width={50}
-              height={50}
+              width={45}
+              height={45}
               alt="App Logo"
-              className="rounded-full mr-4"
+              className="rounded-full mr-3 hidden md:block"
             />
             Dev<span className="text-sky-600">Finder</span>
           </Link>
         </div>
+
+        <nav>
+          {isUserLoggedIn && routerPath !== "/my-rooms" && (
+            <Link
+              className="hover:text-gray-700 dark:hover:text-gray-300 text-xl font-semibold hidden md:block"
+              href="/my-rooms"
+            >
+              My Rooms
+            </Link>
+          )}
+          {isUserLoggedIn && routerPath !== "/dev-rooms" && (
+            <Link
+              className="hover:text-gray-700 dark:hover:text-gray-300 text-xl font-semibold hidden md:block"
+              href="/dev-rooms"
+            >
+              Browse Rooms
+            </Link>
+          )}
+        </nav>
+
         <div className="flex items-center gap-3">
-          <AccountDropdown />
+          {isUserLoggedIn && <AccountDropdown />}
+          {!isUserLoggedIn && (
+            <Button onClick={() => signIn("google")} className="text-base">
+              <LogInIcon className="mr-2" /> Sign In
+            </Button>
+          )}
           <ModeToggle />
         </div>
       </div>

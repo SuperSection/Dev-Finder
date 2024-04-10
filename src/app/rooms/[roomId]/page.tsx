@@ -1,12 +1,16 @@
 import Link from "next/link";
 import { GithubIcon } from "lucide-react";
+
+import { splitTags } from "@/lib/utils";
 import { getRoom } from "@/data-access/rooms";
 import { Button } from "@/components/ui/button";
-import { TagsList, splitTags } from "@/components/tags-list";
+import { TagsList } from "@/components/tags-list";
 import { DevFinderVideoRoom } from "./video-player";
+import { unstable_noStore } from "next/cache";
 
 
 export default async function RoomPage(props: { params: { roomId: string } }) {
+  unstable_noStore();
   const roomId = props.params.roomId;
 
   const room = await getRoom(roomId);
@@ -16,7 +20,7 @@ export default async function RoomPage(props: { params: { roomId: string } }) {
         <div className="flex items-center justify-center flex-col gap-3 my-72">
           <h1 className="font-medium text-xl"> No room found with this ID.</h1>
           <Button asChild>
-            <Link href="/" className="text-base">
+            <Link href="/dev-rooms" className="text-base">
               Find Rooms
             </Link>
           </Button>

@@ -8,6 +8,7 @@ import { Room } from "@/db/schema";
 import {
   Call,
   CallControls,
+  CallParticipantsList,
   SpeakerLayout,
   StreamCall,
   StreamTheme,
@@ -16,9 +17,10 @@ import {
 } from "@stream-io/video-react-sdk";
 import { generateTokenAction } from "./actions";
 import { env } from "@/validators/validateEnv";
+import { useRouter } from "next/navigation";
 
 
-const apiKey = env.NEXT_PUBLIC_GET_STREAM_API_KEY;
+const apiKey = process.env.NEXT_PUBLIC_GET_STREAM_API_KEY!;
 
 
 export function DevFinderVideoRoom({ room }: { room: Room }) {
@@ -26,6 +28,8 @@ export function DevFinderVideoRoom({ room }: { room: Room }) {
 
   const [client, setClient] = useState<StreamVideoClient | null>(null);
   const [call, setCall] = useState<Call | null>(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     if (!session.data || !room) {
@@ -35,7 +39,11 @@ export function DevFinderVideoRoom({ room }: { room: Room }) {
     const userId = session.data?.user.id;
     const client = new StreamVideoClient({
       apiKey,
-      user: { id: userId },
+      user: {
+        id: userId,
+        name: session.data?.user.name ?? undefined,
+        image: session.data?.user.image ?? undefined,
+       },
       tokenProvider: async () => await generateTokenAction(),
     });
     setClient(client);
@@ -45,8 +53,10 @@ export function DevFinderVideoRoom({ room }: { room: Room }) {
     setCall(call);
 
     return () => {
-      call.leave();
-      client.disconnectUser();
+      call
+        .leave()
+        .then(() => client.disconnectUser())
+        .catch(console.error);
     };
   }, [session, room]);
 
@@ -58,7 +68,12 @@ export function DevFinderVideoRoom({ room }: { room: Room }) {
         <StreamTheme>
           <StreamCall call={call}>
             <SpeakerLayout />
-            <CallControls />
+            <CallControls
+              onLeave={() => {
+                router.push("/dev-rooms");
+              }}
+            />
+            <CallParticipantsList onClose={() => undefined} />
           </StreamCall>
         </StreamTheme>
       </StreamVideo>

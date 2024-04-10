@@ -33,7 +33,7 @@ export const authConfig = {
         where: (users, { eq }) => eq(users.email, token.email!),
       });
 
-      if (!dbUser) { 
+      if (!dbUser) {
         throw new Error("No user found with the email.");
       }
 
@@ -51,8 +51,8 @@ export const authConfig = {
           id: token.id as string,
           name: token.name,
           email: token.email,
-          image :token.picture,
-        }
+          image: token.picture,
+        };
       }
 
       return session;

@@ -51,7 +51,7 @@ export default function CreateRoomForm() {
   async function onSubmit(values: RoomForm) {
     // TODO: Invoke a server action to store the data in our database
     await createRoomAction(values);
-    router.push("/");
+    router.push("/dev-rooms");
   }
 
   

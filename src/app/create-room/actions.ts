@@ -16,5 +16,5 @@ export async function createRoomAction(roomData: Omit<Room, "id" | "userId">) {
 
   await db.insert(rooms).values({ ...roomData, userId: session?.user.id });
 
-  revalidatePath("/");
+  revalidatePath("/dev-rooms");
 }
