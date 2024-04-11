@@ -1,9 +1,10 @@
 "use client";
 
+import { useEffect } from 'react';
 import { SearchIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import {
     Form,
@@ -15,7 +16,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import searchSchema, { SearchBarType } from '@/validators/search.schema';
-import { useEffect } from 'react';
 
 
 export default function SearchBar() {
@@ -40,7 +40,7 @@ export default function SearchBar() {
 
   async function onSearch(values: SearchBarType) {
     if (values.search) {
-      router.push(`/?search=${values.search}`);
+      router.push(`/dev-rooms?search=${values.search}`);
     } else {
       router.push("/dev-rooms");
     }
@@ -60,7 +60,7 @@ export default function SearchBar() {
                   {...field}
                   {...register("search")}
                   placeholder="Filter rooms by keywords, such as typescript, nextjs, java"
-                  className="w-[50vw]"
+                  className="w-[45vw]"
                 />
               </FormControl>
               <FormMessage />

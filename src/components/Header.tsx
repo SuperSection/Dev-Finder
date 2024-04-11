@@ -93,10 +93,10 @@ export function Header() {
           </Link>
         </div>
 
-        <nav>
+        <nav className="flex gap-6  text-lg font-semibold ">
           {isUserLoggedIn && routerPath !== "/my-rooms" && (
             <Link
-              className="hover:text-gray-700 dark:hover:text-gray-300 text-xl font-semibold hidden md:block"
+              className="hover:text-gray-700 dark:hover:text-gray-300 hidden sm:block"
               href="/my-rooms"
             >
               My Rooms
@@ -104,7 +104,7 @@ export function Header() {
           )}
           {isUserLoggedIn && routerPath !== "/dev-rooms" && (
             <Link
-              className="hover:text-gray-700 dark:hover:text-gray-300 text-xl font-semibold hidden md:block"
+              className="hover:text-gray-700 dark:hover:text-gray-300 hidden sm:block"
               href="/dev-rooms"
             >
               Browse Rooms

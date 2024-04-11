@@ -17,7 +17,7 @@ export default async function BrowseDevRooms({
   const rooms = await getAllRooms(searchParams.search);
 
   return (
-    <main className="min-h-screen lg:p-16 lg:px-24 p-10 px-7 gap-2">
+    <main className="lg:p-16 lg:px-24 p-10 px-7 gap-2">
       <div className="w-full flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold sm:text-4xl">Find Dev Rooms</h1>
         <Button asChild>

@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link";
-import { GithubIcon, TrashIcon } from "lucide-react";
+import { GithubIcon, PencilIcon, TrashIcon } from "lucide-react";
 
 import { Room, rooms } from "@/db/schema";
 import {
@@ -27,6 +27,7 @@ import { splitTags } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { TagsList } from "@/components/tags-list";
 import { deleteRoomAction } from "./actions";
+import { ProvidePasswordPopup } from "@/components/provide-password-popup";
 
 
 function DeleteRoom({ roomId }: { roomId: string }) {
@@ -65,12 +66,20 @@ function DeleteRoom({ roomId }: { roomId: string }) {
 
 
 export function UserRoomCard({ room }: { room: Room }) {
+
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="relative">
+        <Button size="icon" className="absolute top-4 right-4">
+          <Link href={`/edit-room/${room.id}`}>
+            <PencilIcon size={20} />
+          </Link>
+        </Button>
+
         <CardTitle>{room.name}</CardTitle>
         <CardDescription>{room.description}</CardDescription>
       </CardHeader>
+
       <CardContent>
         {room.githubRepo && (
           <Link
@@ -90,9 +99,13 @@ export function UserRoomCard({ room }: { room: Room }) {
           <TagsList tags={splitTags(room.tags)} badgeType="secondary" />
         </CardContent>
         <CardFooter className="flex flex-wrap items-center justify-between gap-2">
-          <Button asChild>
-            <Link href={`/rooms/${room.id}`}>Join Room</Link>
-          </Button>
+          {room.isPrivate ? (
+            <ProvidePasswordPopup room={room} />
+          ) : (
+            <Button asChild>
+              <Link href={`/rooms/${room.id}`}>Join Room</Link>
+            </Button>
+          )}
 
           <DeleteRoom roomId={room.id} />
         </CardFooter>

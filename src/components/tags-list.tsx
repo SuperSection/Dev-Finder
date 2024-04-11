@@ -20,7 +20,7 @@ export function TagsList({tags, badgeType} :
           key={tag}
           className={cn(badgeVariants({ variant: badgeType }))}
           onClick={() => {
-            router.push(`/?search=${tag}`);
+            router.push(`/dev-rooms?search=${tag}`);
           }}
         >
           {tag}

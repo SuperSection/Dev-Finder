@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { GithubIcon } from "lucide-react";
+import { unstable_noStore } from "next/cache";
 
 import { splitTags } from "@/lib/utils";
 import { getRoom } from "@/data-access/rooms";
 import { Button } from "@/components/ui/button";
 import { TagsList } from "@/components/tags-list";
 import { DevFinderVideoRoom } from "./video-player";
-import { unstable_noStore } from "next/cache";
 
 
 export default async function RoomPage(props: { params: { roomId: string } }) {
@@ -18,7 +18,7 @@ export default async function RoomPage(props: { params: { roomId: string } }) {
   if (!room) {
     return (
         <div className="flex items-center justify-center flex-col gap-3 my-72">
-          <h1 className="font-medium text-xl"> No room found with this ID.</h1>
+          <h1 className="font-medium text-xl">No room found with this ID.</h1>
           <Button asChild>
             <Link href="/dev-rooms" className="text-base">
               Find Rooms
@@ -29,7 +29,7 @@ export default async function RoomPage(props: { params: { roomId: string } }) {
   }
 
   return (
-    <div className="grid grid-cols-4 min-h-screen">
+    <div className="grid grid-cols-4">
       <div className="col-span-3 p-4 pr-2">
         <div className="drop-shadow-lg border bg-card text-card-foreground rounded-lg p-5">
           <DevFinderVideoRoom room={room} />
