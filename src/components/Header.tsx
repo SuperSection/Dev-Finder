@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { LogInIcon, LogOutIcon } from "lucide-react";
+import { LogInIcon, LogOutIcon, DeleteIcon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { signIn, signOut, useSession } from "next-auth/react";
 
@@ -10,11 +10,24 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { deleteAccountAction } from "@/app/actions";
 
 
 function AccountDropdown() {
@@ -47,20 +60,53 @@ function AccountDropdown() {
       <DropdownMenuContent>
         {isUserLoggedIn && (
           <DropdownMenuItem
+            className="text-base flex gap-2 justify-"
             onClick={() =>
               signOut({
                 callbackUrl: "/",
               })
             }
           >
-            <LogOutIcon className="mr-2" /> Sign Out
+            <LogOutIcon /> Sign Out
           </DropdownMenuItem>
         )}
         <DropdownMenuItem
-          className="text-base px-6 w-full"
+          className="text-base flex pl-9"
           onClick={() => router.push("/my-rooms")}
         >
           My Rooms
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem asChild>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" className="text-base flex gap-2">
+                <DeleteIcon className="rotate-180" /> Delete Account
+
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete your
+                  account and all the data associated with it.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={async () => {
+                    await deleteAccountAction();
+                    signOut({ callbackUrl: "/" });
+                  }}
+                >
+                  Yes, delete my account
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -76,7 +122,7 @@ export function Header() {
 
   return (
     <header className=" dark:bg-gray-900 bg-gray-100 p-2 z-10 relative">
-      <div className="flex justify-between items-center  container px-auto">
+      <div className="flex justify-between items-center container px-auto">
         <div>
           <Link
             href="/dev-rooms"
@@ -93,7 +139,7 @@ export function Header() {
           </Link>
         </div>
 
-        <nav className="flex gap-6  text-lg font-semibold ">
+        <nav className="flex gap-12 text-lg font-semibold ">
           {isUserLoggedIn && routerPath !== "/my-rooms" && (
             <Link
               className="hover:text-gray-700 dark:hover:text-gray-300 hidden sm:block"

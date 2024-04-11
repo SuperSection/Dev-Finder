@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 
@@ -16,8 +17,6 @@ import {
   StreamVideoClient,
 } from "@stream-io/video-react-sdk";
 import { generateTokenAction } from "./actions";
-import { env } from "@/validators/validateEnv";
-import { useRouter } from "next/navigation";
 
 
 const apiKey = process.env.NEXT_PUBLIC_GET_STREAM_API_KEY!;
@@ -47,7 +46,7 @@ export function DevFinderVideoRoom({ room }: { room: Room }) {
       tokenProvider: async () => await generateTokenAction(),
     });
     setClient(client);
-
+    
     const call = client.call("default", room.id);
     call.join({ create: true });
     setCall(call);
@@ -70,7 +69,7 @@ export function DevFinderVideoRoom({ room }: { room: Room }) {
             <SpeakerLayout />
             <CallControls
               onLeave={() => {
-                router.push("/dev-rooms");
+                router.back();
               }}
             />
             <CallParticipantsList onClose={() => undefined} />

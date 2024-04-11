@@ -4,7 +4,9 @@ import { deleteRoom, getRoom } from "@/data-access/rooms";
 import { getSession } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
+
 export async function deleteRoomAction(roomId: string) {
+    // get the session
     const session = await getSession();
     if (!session) {
         throw new Error("User not authenticated");

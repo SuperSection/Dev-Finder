@@ -1,9 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import Link from "next/link";
 import { GithubIcon } from "lucide-react";
 
 import { Room } from "@/db/schema";
+import { splitTags } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -12,16 +13,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { splitTags } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { TagsList } from "@/components/tags-list";
-import Link from "next/link";
 import { ProvidePasswordPopup } from "@/components/provide-password-popup";
 
 
 export function RoomCard({ room }: { room: Room }) {
-  const [showPasswordPopup, setShowPasswordPopup] = useState(false);
-
   return (
     <Card>
       <CardHeader>
@@ -47,6 +44,7 @@ export function RoomCard({ room }: { room: Room }) {
         <CardContent>
           <TagsList tags={splitTags(room.tags)} badgeType="secondary" />
         </CardContent>
+        
         <CardFooter>
           {room.isPrivate ? (
             <ProvidePasswordPopup room={room} />
@@ -57,7 +55,7 @@ export function RoomCard({ room }: { room: Room }) {
           )}
         </CardFooter>
       </div>
-      
+
     </Card>
   );
 }

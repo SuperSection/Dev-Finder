@@ -5,6 +5,7 @@ import { StreamChat } from "stream-chat";
 
 
 export async function generateTokenAction() {
+  // get the session
   const session = await getSession();
 
   if (!session) {

@@ -9,6 +9,7 @@ import { updateRoom, getRoom } from "@/data-access/rooms";
 
 
 export async function editRoomAction(roomData: Omit<Room, "userId">) {
+  // get the session
   const session = await getSession();
   if (!session) {
     throw new Error("You must be logged in to create a room.");
@@ -24,5 +25,5 @@ export async function editRoomAction(roomData: Omit<Room, "userId">) {
 
   revalidatePath("/dev-rooms");
   revalidatePath(`/edit-room/${roomData.id}`);
-  redirect("/dev-rooms");
+  redirect("/my-rooms");
 }

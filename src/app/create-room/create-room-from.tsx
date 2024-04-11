@@ -1,9 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { LoaderIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { createRoomAction } from "./actions";
 import {
     Form,
     FormControl,
@@ -15,16 +18,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
-import { createRoomAction } from "./actions";
 import roomFormSchema, { RoomForm } from "@/validators/roomForm.schema";
-import { useMemo, useState } from "react";
-
 
 
 export default function CreateRoomForm() {
   const [isRoomPrivate, toggleRoomType] = useState(false);
-
+  const { toast } = useToast();
   const router = useRouter();
 
   // 1. Define your form.
@@ -44,30 +45,28 @@ export default function CreateRoomForm() {
     register,
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { isSubmitting },
   } = form;
 
-  // 2. Define a submit handler.
   async function onSubmit(values: RoomForm) {
-    // TODO: Invoke a server action to store the data in our database
-    await createRoomAction(values);
-    router.push("/dev-rooms");
+    const room = await createRoomAction(values);
+    router.push(`/rooms/${room.id}`);
+    toast({
+      title: "Room Created",
+      description: "Your room has been created successfully.",
+    });
   }
 
   
   const handleCheckboxChange = () => {
-    console.log(isRoomPrivate);
     toggleRoomType(!isRoomPrivate);
-
-    // Update form value directly using control.setValue()
-    form.setValue("isPrivate", !form.getValues().isPrivate); // Toggle value
+    form.setValue("isPrivate", !form.getValues().isPrivate);
   };
 
 
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-
         <FormField
           control={control}
           name="name"
@@ -143,7 +142,8 @@ export default function CreateRoomForm() {
                 />
               </FormControl>
               <FormDescription>
-                List your programming languages, frameworks, libraries so people can find their preferrences
+                List your programming languages, frameworks, libraries so people
+                can find their preferrences
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -182,11 +182,11 @@ export default function CreateRoomForm() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input 
-                    {...field} 
-                    type="password" 
+                  <Input
+                    {...field}
+                    type="password"
                     {...register("password")}
-                    placeholder="Room Password" 
+                    placeholder="Room Password"
                   />
                 </FormControl>
                 <FormDescription>
@@ -198,7 +198,15 @@ export default function CreateRoomForm() {
           />
         )}
 
-        <Button type="submit">Create Room</Button>
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? (
+            <div className="flex items-center gap-2">
+              <LoaderIcon className="animate-spin" /> Creating...
+            </div>
+          ) : (
+            "Create Room"
+          )}
+        </Button>
       </form>
     </Form>
   );

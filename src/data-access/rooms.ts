@@ -38,13 +38,18 @@ export async function deleteRoom(roomId: string) {
 
 
 export async function createRoom(roomData: Omit<Room, "id" | "userId">, userId: string) {
-  await db.insert(rooms).values({...roomData, userId});
+  const createdRoom =  await db
+    .insert(rooms)
+    .values({ ...roomData, userId })
+    .returning();
+  
+  return createdRoom[0];
 }
 
 
 export async function updateRoom(roomData: Room) {
-  await db.update(rooms).set(roomData).where(eq(rooms.id, roomData.id));
-  return await getRoom(roomData.id);
+  const updatedRoom = await db.update(rooms).set(roomData).where(eq(rooms.id, roomData.id)).returning();
+  return updatedRoom[0];
 }
 
 

@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { useParams, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { Room } from "@/db/schema";
 import { editRoomAction } from "./actions";
 import {
     Form,
@@ -18,55 +19,79 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useToast } from "@/components/ui/use-toast";
 import roomFormSchema, { RoomForm } from "@/validators/roomForm.schema";
-import { Room } from "@/db/schema";
-
+import { LoaderIcon } from "lucide-react";
 
 
 export function EditRoomForm({ roomData }: { roomData: Room }) {
-  const [isRoomPrivate, toggleRoomType] = useState(roomData.isPrivate);
-
+  const { toast } = useToast();
   const router = useRouter();
-
+  
   const params = useParams();
-
-  // 1. Define your form.
+  
   const form = useForm<RoomForm>({
     resolver: zodResolver(roomFormSchema),
     defaultValues: {
       name: roomData.name,
-      description: roomData.description ?? "",
+      description: roomData.description,
       githubRepo: roomData.githubRepo ?? "",
       tags: roomData.tags,
-      isPrivate: roomData.isPrivate ?? false,
+      isPrivate: roomData.isPrivate,
       password: roomData.password ?? "",
     },
   });
-
-  const {
-    register,
-    control,
-    handleSubmit,
-  } = form;
-
-  // 2. Define a submit handler.
-  async function onSubmit(values: RoomForm) {
+  
+  const { register, control, handleSubmit, formState: { isSubmitting } } = form;
+  
+  async function editRoom(values: RoomForm) {
     await editRoomAction({ id: params.roomId as string, ...values });
-    router.push("/dev-rooms");
+    toast({
+      title: "Room Updated",
+      description: "You've updated the room successfully.",
+    });
   }
+  
+
+  const [isRoomPrivate, toggleRoomType] = useState<boolean>(roomData.isPrivate);
 
   const handleCheckboxChange = () => {
-    console.log(isRoomPrivate);
     toggleRoomType(!isRoomPrivate);
+    form.setValue("isPrivate", !form.getValues().isPrivate);
 
-    // Update form value directly using control.setValue()
-    form.setValue("isPrivate", !form.getValues().isPrivate); // Toggle value
+    // when room is set to public
+    if (!form.getValues().isPrivate) {
+      form.setValue("password", "");
+      toast({
+        title: "Room is now public",
+        description: "Your room has no password, anyone can join.",
+      });
+    }
+
+    // when room is set to private
+    if (form.getValues().isPrivate) {
+
+      if (roomData.password && roomData.password !== "") {
+        form.setValue("password", roomData.password);
+        toast({
+          title: "No password changed",
+          description: "Room password remains same as previous",
+        });
+        
+      } else {
+        toast({
+          title: "Room is now private",
+          description: "Please set a password to your room.",
+        });
+      }
+    }
+
   };
 
 
   return (
     <Form {...form}>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={handleSubmit(editRoom)} className="space-y-8">
         <FormField
           control={control}
           name="name"
@@ -150,29 +175,31 @@ export function EditRoomForm({ roomData }: { roomData: Room }) {
           )}
         />
 
-        <FormField
-          control={control}
-          name="isPrivate"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center space-x-2">
-                <FormControl>
-                  <Checkbox
-                    id="privateRoom"
-                    {...register("isPrivate")}
-                    onCheckedChange={handleCheckboxChange}
-                  />
-                </FormControl>
-                <FormLabel
-                  htmlFor="privateRoom"
-                  className="text-base font-medium"
-                >
-                  Private Room
-                </FormLabel>
-              </div>
-            </FormItem>
-          )}
-        />
+        {!roomData.isPrivate && (
+          <FormField
+            control={control}
+            name="isPrivate"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex items-center space-x-2">
+                  <FormControl>
+                    <Checkbox
+                      id="privateRoom"
+                      {...register("isPrivate")}
+                      onCheckedChange={handleCheckboxChange}
+                    />
+                  </FormControl>
+                  <FormLabel
+                    htmlFor="privateRoom"
+                    className="text-base font-medium"
+                  >
+                    Make the Room Private
+                  </FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
+        )}
 
         {isRoomPrivate && ( // Conditionally render password input
           <FormField
@@ -198,7 +225,41 @@ export function EditRoomForm({ roomData }: { roomData: Room }) {
           />
         )}
 
-        <Button type="submit">Update Room</Button>
+        {roomData.isPrivate && (
+          <FormField
+            control={control}
+            name="isPrivate"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex items-center space-x-2">
+                  <FormControl>
+                    <Checkbox
+                      id="privateRoom"
+                      {...register("isPrivate")}
+                      onCheckedChange={handleCheckboxChange}
+                    />
+                  </FormControl>
+                  <FormLabel
+                    htmlFor="privateRoom"
+                    className="text-base font-medium"
+                  >
+                    Make the Room Public
+                  </FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
+        )}
+
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? (
+            <div className="flex items-center gap-2">
+              <LoaderIcon className="animate-spin" /> Updating...
+            </div>
+          ) : (
+            "Update Room"
+          )}
+        </Button>
       </form>
     </Form>
   );

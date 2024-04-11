@@ -76,10 +76,10 @@ export const rooms = pgTable("room", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
-  description: text("description"),
+  description: text("description").notNull(),
   githubRepo: text("githubRepo"),
   tags: text("language").notNull(),
-  isPrivate: boolean("isPrivate").default(false),
+  isPrivate: boolean("isPrivate").default(false).notNull(),
   password: text("password"),
 });
 
