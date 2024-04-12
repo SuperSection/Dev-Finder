@@ -28,7 +28,6 @@ export default function CreateRoomForm() {
   const { toast } = useToast();
   const router = useRouter();
 
-  // 1. Define your form.
   const form = useForm<RoomForm>({
     resolver: zodResolver(roomFormSchema),
     defaultValues: {
@@ -57,7 +56,6 @@ export default function CreateRoomForm() {
     });
   }
 
-  
   const handleCheckboxChange = () => {
     toggleRoomType(!isRoomPrivate);
     form.setValue("isPrivate", !form.getValues().isPrivate);

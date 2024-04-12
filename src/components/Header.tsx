@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { LogInIcon, LogOutIcon, DeleteIcon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { LogInIcon, LogOutIcon, DeleteIcon } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -25,9 +25,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { deleteAccountAction } from "@/app/actions";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { deleteAccountAction } from "@/app/actions";
 
 
 function AccountDropdown() {
