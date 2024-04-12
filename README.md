@@ -40,7 +40,7 @@ Open [https://local.drizzle.studio](https://local.drizzle.studio) with your brow
 
 You can also contribute and give suggestions or add features into this project, I'd love to get feedbacks or thoughts regarding this project.
 
-Check out the live [DevFinder](https://dev-finder-production-4c93.up.railway.app) web application. It's deployed on [railway.app](https://railway.app).
+Check out the live [DevFinder](https://dev-finder.up.railway.app) web application. It's deployed on [railway.app](https://railway.app).
 
 ---
 ## Features of the Application
